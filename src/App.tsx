@@ -1,26 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Button, Center, CircularProgress } from '@chakra-ui/react';
 
-function App() {
+export default function App() {
+  const auth0 = useAuth0();
+
+  if (auth0.isLoading) {
+    return (
+      <Center w="100vw" h="100vh">
+        <CircularProgress isIndeterminate />
+      </Center>
+    );
+  }
+
+  if (!auth0.isAuthenticated) {
+    auth0.loginWithRedirect();
+  }
+
+  auth0.getAccessTokenSilently({ scope: 'email profile' }).then(console.log);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Center w="100vw" h="100vh">
+      <Button onClick={() => auth0.logout()}>Logout</Button>
+    </Center>
   );
 }
-
-export default App;
