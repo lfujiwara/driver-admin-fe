@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,7 +15,9 @@ ReactDOM.render(
       audience={'' + process.env.REACT_APP_AUTH0_AUDIENCE}
       issuer={'' + process.env.REACT_APP_AUTH0_ISSUER}
     >
-      <ChakraProvider>
+      <ChakraProvider
+        theme={extendTheme({ config: { initialColorMode: 'dark' } })}
+      >
         <App />
       </ChakraProvider>
     </Auth0Provider>
