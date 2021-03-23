@@ -1,7 +1,8 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { FindManyQuery } from './common';
 
 export interface Trip {
+  id: number;
   createdAt?: string;
   updatedAt?: string;
   origin: string;
@@ -37,18 +38,18 @@ export default class TripsController {
   }
 
   create(trip: TripCreateInput) {
-    return this.http.post<TripCreateInput, Trip>('', trip);
+    return this.http.post<TripCreateInput, AxiosResponse<Trip>>('', trip);
   }
 
-  read(query: FindManyQuery) {
-    return this.http.get<any, FindManyQuery>('', { params: query });
+  read(query: FindManyQuery = {}) {
+    return this.http.get<any, AxiosResponse<Trip[]>>('', { params: query });
   }
 
   update(id: number, data: Partial<Trip>) {
-    return this.http.patch<Partial<Trip>, Trip>(`${id}`, data);
+    return this.http.patch<Partial<Trip>, AxiosResponse<Trip>>(`${id}`, data);
   }
 
   delete(id: number) {
-    return this.http.delete<any, Trip>(`${id}`);
+    return this.http.delete<any, AxiosResponse<Trip>>(`${id}`);
   }
 }

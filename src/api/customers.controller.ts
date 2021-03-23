@@ -1,12 +1,13 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { FindManyQuery } from './common';
+import { Trip } from './trips.controller';
 
 export interface Customer {
   id: number;
   name: string;
   phoneNumber?: string;
-  createAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CustomerCreateInput {
@@ -28,18 +29,53 @@ export default class CustomersController {
   }
 
   create(customer: CustomerCreateInput) {
-    return this.http.post<CustomerCreateInput, Customer>('', customer);
+    return this.http.post<CustomerCreateInput, AxiosResponse<Customer>>(
+      '',
+      customer
+    );
   }
 
-  read(query: FindManyQuery) {
-    return this.http.get<any, FindManyQuery>('', { params: query });
+  read(query: FindManyQuery = {}) {
+    return this.http.get<any, AxiosResponse<Customer[]>>('', { params: query });
   }
 
   update(id: number, data: Partial<Customer>) {
-    return this.http.patch<Partial<Customer>, Customer>(`${id}`, data);
+    return this.http.patch<Partial<Customer>, AxiosResponse<Customer>>(
+      `${id}`,
+      data
+    );
   }
 
   delete(id: number) {
-    return this.http.delete<any, Customer>(`${id}`);
+    return this.http.delete<any, AxiosResponse<Customer>>(`${id}`);
+  }
+
+  search(text: string, query: FindManyQuery = {}) {
+    return this.http.get<any, AxiosResponse<Customer[]>>(
+      text.trim() ? `search/${text.trim()}` : '',
+      {
+        params: query,
+      }
+    );
+  }
+
+  getById(id: number) {
+    return this.http.get<any, AxiosResponse<Customer & { _tripCount: number }>>(
+      `${id}`
+    );
+  }
+
+  getMonthlyReportById(id: number, start: string, end: string) {
+    return this.http.get<
+      any,
+      AxiosResponse<{
+        trips: Trip[];
+        aggregate: {
+          avg: { fare: number };
+          sum: { fare: number };
+          count: number;
+        };
+      }>
+    >(`${id}/report`, { params: { start, end } });
   }
 }

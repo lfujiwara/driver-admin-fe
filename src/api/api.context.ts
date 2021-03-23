@@ -25,6 +25,8 @@ export const makeApiContextValue = (
 
 const APIContext = React.createContext<APIControllers>(makeApiContextValue());
 
+export const API_URL = '' + process.env.REACT_APP_DRIVER_ADMIN_API_URL;
+
 export const APIProvider = APIContext.Provider;
 
 export const useAPI = () => {

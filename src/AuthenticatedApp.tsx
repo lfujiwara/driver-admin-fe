@@ -5,7 +5,10 @@ import RedirectingToAuth from './components/app/RedirectingToAuth';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Index from './pages/Index';
 import { AxiosRequestConfig } from 'axios';
-import { APIProvider, makeApiContextValue } from './api/api.context';
+import { APIProvider, API_URL, makeApiContextValue } from './api/api.context';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import Customers from './pages/Customers';
+import CustomerPage from './pages/Customer';
 
 export default function AuthenticatedApp() {
   const auth0 = useAuth0();
@@ -20,21 +23,31 @@ export default function AuthenticatedApp() {
   }
 
   const auth0Interceptor = async (config: AxiosRequestConfig) => {
-    config.headers.Authorization = `Bearer ${await auth0.getAccessTokenSilently()}`;
+    if (config.baseURL?.startsWith(API_URL)) {
+      config.headers.Authorization = `Bearer ${await auth0.getAccessTokenSilently()}`;
+    }
     return config;
   };
 
   const APIContextValue = makeApiContextValue(auth0Interceptor);
 
   return (
-    <APIProvider value={APIContextValue}>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/">
-            <Index />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </APIProvider>
+    <QueryClientProvider client={new QueryClient()}>
+      <APIProvider value={APIContextValue}>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/">
+              <Index />
+            </Route>
+            <Route exact path="/customers">
+              <Customers />
+            </Route>
+            <Route path="/customers/:id">
+              <CustomerPage />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </APIProvider>
+    </QueryClientProvider>
   );
 }

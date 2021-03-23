@@ -7,6 +7,8 @@ import {
   ComponentWithAs,
   CenterProps,
   Center,
+  StackProps,
+  VStack,
 } from '@chakra-ui/react';
 import { motion, MotionProps, isValidMotionProp } from 'framer-motion';
 
@@ -35,8 +37,12 @@ function generateMotion<Props extends object, T extends As>(
   return Wrapped;
 }
 
+export const applyMotion = (c: ComponentWithAs<T, E>) =>
+  generateMotion<React.ComponentProps<E>, T>(c);
+
 export const MotionBox = generateMotion<BoxProps, 'div'>(Box);
 export const MotionCenter = generateMotion<CenterProps, 'div'>(Center);
+export const MotionVStack = generateMotion<StackProps, 'div'>(VStack);
 
 export const PageAnimationSettings: MotionProps = {
   transition: { duration: 0.5 },
