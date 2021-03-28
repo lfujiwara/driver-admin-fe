@@ -6,9 +6,11 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Index from './pages/Index';
 import { AxiosRequestConfig } from 'axios';
 import { APIProvider, API_URL, makeApiContextValue } from './api/api.context';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { useIsFetching, useIsMutating } from 'react-query';
 import Customers from './pages/Customers';
 import CustomerPage from './pages/Customer';
+import { Progress } from '@chakra-ui/progress';
+import { Box } from '@chakra-ui/layout';
 
 export default function AuthenticatedApp() {
   const auth0 = useAuth0();
@@ -30,11 +32,13 @@ export default function AuthenticatedApp() {
   };
 
   const APIContextValue = makeApiContextValue(auth0Interceptor);
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
 
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <APIProvider value={APIContextValue}>
-        <BrowserRouter>
+    <APIProvider value={APIContextValue}>
+      <BrowserRouter>
+        <Box boxSizing="border-box">
           <Switch>
             <Route exact path="/">
               <Index />
@@ -46,8 +50,17 @@ export default function AuthenticatedApp() {
               <CustomerPage />
             </Route>
           </Switch>
-        </BrowserRouter>
-      </APIProvider>
-    </QueryClientProvider>
+        </Box>
+        {(isFetching > 0 || isMutating > 0) && (
+          <Progress
+            size="sm"
+            position="fixed"
+            bottom={0}
+            w="100%"
+            isIndeterminate
+          />
+        )}
+      </BrowserRouter>
+    </APIProvider>
   );
 }

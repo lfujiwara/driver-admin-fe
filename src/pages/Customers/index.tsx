@@ -34,7 +34,7 @@ export default function Customers() {
   );
 
   return (
-    <MotionCenter {...PageAnimationSettings} w="100%">
+    <MotionCenter {...PageAnimationSettings} pb="16px">
       <Box maxW="container.xl" w="100%">
         <Link to="/">
           <Text p="2" fontSize="sm" _hover={{ textDecor: 'underline' }}>

@@ -50,8 +50,10 @@ export default function CustomerPage() {
     year: padWithZeros(new Date().getFullYear(), 4),
   });
 
-  const query = useQuery(`customer/${customerId}`, () =>
-    customers.getById(customerId).then((res) => res.data)
+  const query = useQuery(
+    `customer/${customerId}`,
+    () => customers.getById(customerId).then((res) => res.data),
+    { placeholderData: { name: '-', id: 0, phoneNumber: '-' } }
   );
   const reportQuery = useQuery(
     [`customer/${customerId}/report`, buildDates(state.month, state.year)],
@@ -77,8 +79,8 @@ export default function CustomerPage() {
   return (
     <>
       {isNaN(Number(id)) && <Redirect to="/customers" />}
-      <MotionCenter {...PageAnimationSettings} w="100%">
-        <Box maxW="container.xl" w="100%">
+      <MotionCenter {...PageAnimationSettings}>
+        <Box maxW="container.xl" w="100%" pb="16px">
           <Link to="/customers">
             <Text p="2" fontSize="sm" _hover={{ textDecor: 'underline' }}>
               Voltar
@@ -89,19 +91,14 @@ export default function CustomerPage() {
             p="4"
             bgColor={useColorModeValue('blue.400', 'blue.600')}
           >
-            {query.data && reportQuery.data && (
-              <>
-                <Box textAlign="center">
-                  <Text fontSize="lg" fontWeight="semibold">
-                    {query.data.name}
-                  </Text>
-                  <Text fontSize="sm"> {query.data.phoneNumber || '-'}</Text>
-                </Box>
-              </>
-            )}
+            <Box textAlign="center">
+              <Text fontSize="lg" fontWeight="semibold">
+                {query.data?.name}
+              </Text>
+              <Text fontSize="sm"> {query.data?.phoneNumber}</Text>
+            </Box>
           </MotionVStack>
-          <MotionBox
-            layout
+          <Box
             w="100%"
             mt="4"
             p="4"
@@ -139,7 +136,13 @@ export default function CustomerPage() {
               )}
             </VStack>
             <Text fontWeight="semibold">Corridas</Text>
-            <VStack spacing="2" mt="4" position="relative" alignItems="center">
+            <MotionVStack
+              layout
+              spacing="2"
+              mt="4"
+              position="relative"
+              alignItems="center"
+            >
               {reportQuery.data &&
                 reportQuery.data.trips.map((trip, i) => (
                   <TripCard
@@ -153,8 +156,8 @@ export default function CustomerPage() {
                     }}
                   />
                 ))}
-            </VStack>
-          </MotionBox>
+            </MotionVStack>
+          </Box>
         </Box>
       </MotionCenter>
     </>

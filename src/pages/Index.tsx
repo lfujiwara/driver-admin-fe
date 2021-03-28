@@ -13,7 +13,7 @@ export default function Index() {
   const history = useHistory();
 
   return (
-    <MotionCenter {...PageAnimationSettings} w="100vw" h="100vh">
+    <MotionCenter {...PageAnimationSettings} minH="100vh">
       <VStack alignItems="stretch">
         <Text>Olá, {user.name}</Text>
         <Button
